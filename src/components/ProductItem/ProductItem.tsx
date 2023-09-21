@@ -1,3 +1,4 @@
+import React from 'react';
 import { Badge, Container, Row, Col } from 'react-bootstrap';
 import { Product } from '../../types/types';
 

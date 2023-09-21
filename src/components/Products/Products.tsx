@@ -3,6 +3,7 @@ import { Product } from '../../types/types';
 import { CommunicationContext } from '../context/CommunicationsProvider';
 import Message from '../common/Message';
 import ProductItem from '../ProductItem/ProductItem';
+import SearchBar from '../SearchBar/SearchBar';
 
 interface ProductsProps {
   serverUrl: string;
@@ -19,6 +20,7 @@ export default function Products({ serverUrl }: ProductsProps) {
   const { errorMessage, setErrorMessage, successMessage, setSuccessMessage } =
     useContext(CommunicationContext);
   const [products, setProducts] = useState<Product[]>([]);
+  const [searchTerm, setSearchTerm] = useState('');
 
   useEffect(() => {
     (async () => {
@@ -37,20 +39,31 @@ export default function Products({ serverUrl }: ProductsProps) {
       }
     })();
   }, [serverUrl, setErrorMessage, setSuccessMessage]);
-  console.log('products', products);
+
+  function handleSearch(searchString: string) {
+    setSearchTerm(searchString);
+  }
 
   return (
     <>
-      {products.map((product) => (
-        <ProductItem
-          key={product.id}
-          id={product.id}
-          title={product.title}
-          rating={product.rating}
-          description={product.description}
-          thumbnail={product.thumbnail}
-        />
-      ))}
+      <SearchBar input={searchTerm} onSearch={handleSearch} />
+      {products
+        // the filter method below filters the products
+        // according the user input from the SearchBar
+        .filter((product) => {
+          const searchRegExp = new RegExp(searchTerm, 'gi');
+          return product.title.search(searchRegExp) >= 0 ? true : false;
+        })
+        .map((product) => (
+          <ProductItem
+            key={product.id}
+            id={product.id}
+            title={product.title}
+            rating={product.rating}
+            description={product.description}
+            thumbnail={product.thumbnail}
+          />
+        ))}
       <Message error={errorMessage} success={successMessage} />
     </>
   );
