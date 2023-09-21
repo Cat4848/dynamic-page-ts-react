@@ -1,0 +1,7 @@
+*.js
+*.cjs
+*.d.ts
+*.map
+tsconfig.json
+package.json
+node_modules
