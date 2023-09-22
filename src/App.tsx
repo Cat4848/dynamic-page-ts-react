@@ -4,7 +4,7 @@ import Products from './components/Products/Products';
 
 export default function App() {
   const [serverUrl, setServerUrl] = useState(
-    'https://dummyjson.com/products?limit=100',
+    'https://dummyjson.com/products?limit=2',
   );
 
   return (

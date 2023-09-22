@@ -1,21 +1,16 @@
-import { useContext, useEffect, useState } from 'react';
+import { useContext, useState } from 'react';
 import { Product } from '../../types/types';
 import { CommunicationContext } from '../context/CommunicationsProvider';
 import Message from '../common/Message';
 import ProductItem from '../ProductItem/ProductItem';
 import SearchBar from '../SearchBar/SearchBar';
 import { Filter } from '../Filter/Filter';
-import { Container, Badge, Row } from 'react-bootstrap';
+import { Container, Badge, Row, Col } from 'react-bootstrap';
+import useFetch from '../../customHooks/useFetch';
+import AddNewProduct from '../AddNewProduct/AddNewProduct';
 
 interface ProductsProps {
   serverUrl: string;
-}
-
-interface APIResponse {
-  limit: number;
-  products: Product[];
-  skip: number;
-  total: number;
 }
 
 interface FilterMap {
@@ -30,29 +25,10 @@ const filterMap: FilterMap = {
 };
 
 export default function Products({ serverUrl }: ProductsProps) {
-  const { errorMessage, setErrorMessage, successMessage, setSuccessMessage } =
-    useContext(CommunicationContext);
-  const [products, setProducts] = useState<Product[]>([]);
+  const { errorMessage, successMessage } = useContext(CommunicationContext);
   const [searchTerm, setSearchTerm] = useState('');
   const [filter, setFilter] = useState('all');
-
-  useEffect(() => {
-    (async () => {
-      try {
-        const productsRequest = await fetch(serverUrl);
-        const productsResponse: APIResponse = await productsRequest.json();
-        if (productsResponse === null) {
-          throw new Error('Products list empty');
-        }
-        setProducts(productsResponse.products);
-        setSuccessMessage('Products loaded successfully');
-      } catch (e) {
-        if (e instanceof Error) {
-          setErrorMessage(e.message);
-        }
-      }
-    })();
-  }, [serverUrl, setErrorMessage, setSuccessMessage]);
+  const [products, setProducts] = useFetch(serverUrl);
 
   function handleSearch(searchString: string) {
     setSearchTerm(searchString);
@@ -60,6 +36,10 @@ export default function Products({ serverUrl }: ProductsProps) {
 
   function handleFilter(filter: string) {
     setFilter(filter);
+  }
+
+  function handleCreateProduct(newProduct: Product) {
+    setProducts([...products, newProduct]);
   }
 
   const filteredProducts = products
@@ -78,11 +58,18 @@ export default function Products({ serverUrl }: ProductsProps) {
 
   return (
     <>
-      <Container className='mb-5'>
+      <Container className="mb-3">
         <Row>
-        <SearchBar input={searchTerm} onSearch={handleSearch} />
+          <Col>
+            <AddNewProduct onCreateProduct={handleCreateProduct} />
+          </Col>
         </Row>
-        Products displayed <Badge>{filteredProducts.length}</Badge>
+      </Container>
+      <Container className="mb-5">
+        <Row>
+          <SearchBar input={searchTerm} onSearch={handleSearch} />
+        </Row>
+        Products displayed <Badge bg="success">{filteredProducts.length}</Badge>
       </Container>
 
       <Container className="mb-4">
