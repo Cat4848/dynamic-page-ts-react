@@ -9,7 +9,7 @@ interface SearchBarProps {
 
 export default function SearchBar({ input, onSearch }: SearchBarProps) {
   return (
-    <Container className="mb-5">
+    <Container className='mb-2'>
       <InputGroup>
         <InputGroup.Text>Search Products</InputGroup.Text>
         <Form.Control
