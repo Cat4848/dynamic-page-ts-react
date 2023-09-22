@@ -15,10 +15,12 @@ import { object, string, number } from 'yup';
 interface ProductItemProps {
   product: Product;
   onEditProduct: (product: Product) => void;
+  onDeleteProduct: (deletedProductId: number) => void;
 }
 export default function ProductItem({
   product,
   onEditProduct,
+  onDeleteProduct,
 }: ProductItemProps) {
   const { id, title, rating, description, thumbnail } = product;
   const [isEditing, setIsEditing] = useState(false);
@@ -146,6 +148,11 @@ export default function ProductItem({
           <Col>
             <Button variant="secondary" onClick={() => setIsEditing(true)}>
               Edit
+            </Button>
+          </Col>
+          <Col>
+            <Button variant="danger" onClick={() => onDeleteProduct(id)}>
+              Delete
             </Button>
           </Col>
         </Row>

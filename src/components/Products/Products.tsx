@@ -52,6 +52,11 @@ export default function Products({ serverUrl }: ProductsProps) {
     setProducts(updatedProducts);
   }
 
+  function handleDeleteProduct(deletedProductId: number) {
+    const updatedProducts = products.filter(product => product.id !== deletedProductId);
+    setProducts(updatedProducts);
+  }
+
   const filteredProducts = products
     // the filter method below filters the products
     // according the user input from the SearchBar
@@ -84,13 +89,9 @@ export default function Products({ serverUrl }: ProductsProps) {
       {filteredProducts.map((product) => (
         <ProductItem
           key={product.id}
-          // id={product.id}
-          // title={product.title}
-          // rating={product.rating}
-          // description={product.description}
-          // thumbnail={product.thumbnail}
           product={product}
           onEditProduct={handleEditProduct}
+          onDeleteProduct={handleDeleteProduct}
         />
       ))}
       <Message error={errorMessage} success={successMessage} />
