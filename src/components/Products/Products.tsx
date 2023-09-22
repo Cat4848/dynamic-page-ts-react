@@ -44,16 +44,18 @@ export default function Products({ serverUrl }: ProductsProps) {
 
   function handleEditProduct(editedProduct: Product) {
     const updatedProducts = products.map((product) => {
-      if(product.id === editedProduct.id) {
+      if (product.id === editedProduct.id) {
         return editedProduct;
       }
       return product;
-    })
+    });
     setProducts(updatedProducts);
   }
 
   function handleDeleteProduct(deletedProductId: number) {
-    const updatedProducts = products.filter(product => product.id !== deletedProductId);
+    const updatedProducts = products.filter(
+      (product) => product.id !== deletedProductId,
+    );
     setProducts(updatedProducts);
   }
 
@@ -73,6 +75,8 @@ export default function Products({ serverUrl }: ProductsProps) {
 
   return (
     <>
+      <Message error={errorMessage} success={successMessage} />
+
       <Container className="mb-3">
         <AddNewProduct onCreateProduct={handleCreateProduct} />
       </Container>
@@ -94,7 +98,6 @@ export default function Products({ serverUrl }: ProductsProps) {
           onDeleteProduct={handleDeleteProduct}
         />
       ))}
-      <Message error={errorMessage} success={successMessage} />
     </>
   );
 }
