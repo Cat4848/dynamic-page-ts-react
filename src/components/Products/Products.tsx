@@ -5,7 +5,7 @@ import Message from '../common/Message';
 import ProductItem from '../ProductItem/ProductItem';
 import SearchBar from '../SearchBar/SearchBar';
 import { Filter } from '../Filter/Filter';
-import { Container, Badge, Row, Col } from 'react-bootstrap';
+import { Container, Badge, Row } from 'react-bootstrap';
 import useFetch from '../../customHooks/useFetch';
 import AddNewProduct from '../AddNewProduct/AddNewProduct';
 
@@ -42,6 +42,16 @@ export default function Products({ serverUrl }: ProductsProps) {
     setProducts([...products, newProduct]);
   }
 
+  function handleEditProduct(editedProduct: Product) {
+    const updatedProducts = products.map((product) => {
+      if(product.id === editedProduct.id) {
+        return editedProduct;
+      }
+      return product;
+    })
+    setProducts(updatedProducts);
+  }
+
   const filteredProducts = products
     // the filter method below filters the products
     // according the user input from the SearchBar
@@ -59,11 +69,7 @@ export default function Products({ serverUrl }: ProductsProps) {
   return (
     <>
       <Container className="mb-3">
-        <Row>
-          <Col>
-            <AddNewProduct onCreateProduct={handleCreateProduct} />
-          </Col>
-        </Row>
+        <AddNewProduct onCreateProduct={handleCreateProduct} />
       </Container>
       <Container className="mb-5">
         <Row>
@@ -78,11 +84,13 @@ export default function Products({ serverUrl }: ProductsProps) {
       {filteredProducts.map((product) => (
         <ProductItem
           key={product.id}
-          id={product.id}
-          title={product.title}
-          rating={product.rating}
-          description={product.description}
-          thumbnail={product.thumbnail}
+          // id={product.id}
+          // title={product.title}
+          // rating={product.rating}
+          // description={product.description}
+          // thumbnail={product.thumbnail}
+          product={product}
+          onEditProduct={handleEditProduct}
         />
       ))}
       <Message error={errorMessage} success={successMessage} />

@@ -24,8 +24,7 @@ export default function AddNewProduct({ onCreateProduct }: AddNewProductProps) {
   const productSchema = object().shape({
     id: number()
       .required('A number is required')
-      .positive('Positive numbers only')
-      .integer('Only whole numbers please'),
+      .positive('Positive numbers only'),
     title: string().required('Your product needs a title'),
     rating: number()
       .required('Your product needs a rating')
