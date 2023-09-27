@@ -1,4 +1,4 @@
-import { useContext, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { Product } from '../../types/types';
 import { CommunicationContext } from '../context/CommunicationsProvider';
 import Message from '../common/Message';
@@ -6,8 +6,8 @@ import ProductItem from '../ProductItem/ProductItem';
 import SearchBar from '../SearchBar/SearchBar';
 import { Filter } from '../Filter/Filter';
 import { Container, Badge, Row } from 'react-bootstrap';
-import useFetch from '../../customHooks/useFetch';
 import AddNewProduct from '../AddNewProduct/AddNewProduct';
+import useFetch from '../../customHooks/useFetch';
 
 interface ProductsProps {
   serverUrl: string;
@@ -28,7 +28,29 @@ export default function Products({ serverUrl }: ProductsProps) {
   const { errorMessage, successMessage } = useContext(CommunicationContext);
   const [searchTerm, setSearchTerm] = useState('');
   const [filter, setFilter] = useState('all');
+  const { setErrorMessage } = useContext(CommunicationContext);
   const [products, setProducts] = useFetch(serverUrl);
+
+  useEffect(() => {
+    if (isInLocalStorage()) {
+      const load = localStorage.getItem('products');
+      if (load === null) {
+        setErrorMessage('Local Storage products load error');
+      } else {
+        const loadedLocalStorageProducts: Product[] = JSON.parse(load);
+        setProducts(loadedLocalStorageProducts);
+      }
+    }
+  }, [setErrorMessage, setProducts]);
+
+  function isInLocalStorage() {
+    if (localStorage.getItem('products') === null) return false;
+    else return true;
+  }
+
+  function updateLocalStorage() {
+    localStorage.setItem('products', JSON.stringify(products));
+  }
 
   function handleSearch(searchString: string) {
     setSearchTerm(searchString);
@@ -40,6 +62,7 @@ export default function Products({ serverUrl }: ProductsProps) {
 
   function handleCreateProduct(newProduct: Product) {
     setProducts([...products, newProduct]);
+    updateLocalStorage();
   }
 
   function handleEditProduct(editedProduct: Product) {
@@ -50,6 +73,7 @@ export default function Products({ serverUrl }: ProductsProps) {
       return product;
     });
     setProducts(updatedProducts);
+    updateLocalStorage();
   }
 
   function handleDeleteProduct(deletedProductId: number) {
@@ -57,6 +81,7 @@ export default function Products({ serverUrl }: ProductsProps) {
       (product) => product.id !== deletedProductId,
     );
     setProducts(updatedProducts);
+    updateLocalStorage();
   }
 
   const filteredProducts = products
